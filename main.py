@@ -1,5 +1,10 @@
+import os
 from playwright.sync_api import Playwright, sync_playwright
 from WPP_Whatsapp import Create
+from dotenv import load_dotenv
+
+# Load os Envirement variable
+load_dotenv()
 
 
 def login_to_website(page):
@@ -17,11 +22,12 @@ def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context()
     page = context.new_page()
+    file_name = os.getenv('WA_FILE_PATH')
 
     login_to_website(page)
     navigate_to_quote_love(page)
 
-    page.screenshot(path="example-chromium.png", full_page=True)
+    page.screenshot(path=file_name, full_page=True)
 
     context.close()
     browser.close()
@@ -31,7 +37,7 @@ def catchQR(qrCode: str, asciiQR: str, attempt: int, urlCode: str):
     print(asciiQR)
 
 
-def send_image_to_group(client, group_name, message, file_path):
+def send_image_to_group(client, group_name, file_path, message):
     all_groups = client.getAllGroups(False)
     current_group = next(filter(lambda x: x.get("name") == group_name, all_groups), {})
     current_group_id = current_group.get("id", {}).get("_serialized")
@@ -46,7 +52,7 @@ def main():
 
         print("Finish ss images")
 
-        your_session_name = "nico-wpp-session"
+        your_session_name = os.getenv('WA_SESSION_NAME')
 
         creator = Create(
             session=your_session_name,
@@ -61,11 +67,11 @@ def main():
         if creator.state != "CONNECTED":
             raise Exception(creator.state)
 
-        group_name = "testing python"
-        message = "Automated message from Python"
-        file_path = "example-chromium.png"
+        group_name = os.getenv('WA_GROUP_NAME')
+        file_path = os.getenv('WA_FILE_PATH')
+        message = os.getenv('WA_MESSAGE')
 
-        send_image_to_group(client, group_name, message, file_path)
+        send_image_to_group(client, group_name, file_path, message)
 
         creator.sync_close()
     except Exception as e:
