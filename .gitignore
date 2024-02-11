@@ -1,2 +1,6 @@
 tokens
 example-chromium.png
+.env
+.python*
+venv*
+test-env.py
