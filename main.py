@@ -68,8 +68,8 @@ def main():
             raise Exception(creator.state)
 
         group_name = os.getenv('WA_GROUP_NAME')
-        message = os.getenv('WA_MESSAGE')
         file_path = os.getenv('WA_FILE_PATH')
+        message = os.getenv('WA_MESSAGE')
 
         send_image_to_group(client, group_name, file_path, message)
 
